@@ -1,7 +1,7 @@
 package com.derimagia.forgeslack.handler;
 
 import com.derimagia.forgeslack.slack.SlackSender;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.event.ServerChatEvent;
 
 

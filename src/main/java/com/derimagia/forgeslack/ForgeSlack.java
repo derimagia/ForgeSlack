@@ -4,10 +4,10 @@ import com.derimagia.forgeslack.handler.ConfigurationHandler;
 import com.derimagia.forgeslack.handler.FMLEventHandler;
 import com.derimagia.forgeslack.handler.ForgeEventHandler;
 import com.derimagia.forgeslack.slack.SlackReceiveServer;
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.event.FMLServerStartingEvent;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 
 import net.minecraftforge.common.MinecraftForge;
 import org.apache.logging.log4j.LogManager;
@@ -30,7 +30,7 @@ public class ForgeSlack {
 
         if (ConfigurationHandler.enabled) {
             MinecraftForge.EVENT_BUS.register(new ForgeEventHandler());
-            FMLCommonHandler.instance().bus().register(new FMLEventHandler());
+            MinecraftForge.EVENT_BUS.register(new FMLEventHandler());
         }
     }
 
