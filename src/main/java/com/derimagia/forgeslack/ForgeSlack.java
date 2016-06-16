@@ -20,7 +20,7 @@ import org.apache.logging.log4j.Logger;
 public class ForgeSlack {
 
     public static final String modId = "ForgeSlack";
-    public static final String version = "0.1.0";
+    public static final String version = "0.1.1";
 
     public static Logger log = LogManager.getLogger(modId);
 
