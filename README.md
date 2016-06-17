@@ -1,7 +1,7 @@
 # ForgeSlack
 Connects Minecraft Forge -> Slack
 
-*1.8.9 branch*
+*1.9.4 branch*
 
 ## Features
 1. Posts Slack Messages when people in-game talk. Thanks to [MCAPI](https://mcapi.ca/), this includes a picture of the User.
