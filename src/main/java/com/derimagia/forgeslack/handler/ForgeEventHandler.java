@@ -12,7 +12,7 @@ public class ForgeEventHandler {
 
     @SubscribeEvent
     public void serverChat(ServerChatEvent event) {
-        SlackSender.getInstance().send(event.message, event.username);
+        SlackSender.getInstance().send(event.getMessage(), event.getUsername());
     }
 
 }
