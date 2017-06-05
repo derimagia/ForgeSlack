@@ -71,8 +71,13 @@ public class SlackMessageHandler implements EventListener {
         FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().sendChatMsg(ForgeHooks.newChatWithLinks(mcMessage));
     }
 
-
     /**
+     * Slack returns the urls wrapped with "< http://example.com | example.com >" (Without spaces)
+     *
+     * This removes that so that it's just "http://example.com".
+     *
+     * This also fixes ForgeHooks.newChatWithLinks so that it can then replace the links correctly.
+     *
      * @param text - The text to clean.
      */
     private String cleanMessageLinks(String text) {
