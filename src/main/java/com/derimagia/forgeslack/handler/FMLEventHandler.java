@@ -1,6 +1,6 @@
 package com.derimagia.forgeslack.handler;
 
-import com.derimagia.forgeslack.slack.SlackSender;
+import com.derimagia.forgeslack.slack.SlackRelay;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.scoreboard.ScorePlayerTeam;
@@ -19,19 +19,19 @@ public class FMLEventHandler {
     @SubscribeEvent
     public void onJoin(PlayerEvent.PlayerLoggedInEvent event) {
         // @TODO: Localize this?
-        SlackSender.getInstance().send("_[Joined the Game]_", getName(event.player));
+        SlackRelay.getInstance().sendMessage("_[Joined the Game]_", getName(event.player));
     }
 
     @SubscribeEvent
     public void onLeave(PlayerEvent.PlayerLoggedOutEvent event) {
         // @TODO: Localize this?
-        SlackSender.getInstance().send("_[Left the Game]_", getName(event.player));
+        SlackRelay.getInstance().sendMessage("_[Left the Game]_", getName(event.player));
     }
 
     @SubscribeEvent
     public void onPlayerDeath(LivingDeathEvent event) {
         if (event.getEntity() instanceof EntityPlayer) {
-            SlackSender.getInstance().send("_" + ((EntityPlayer) event.getEntity()).getCombatTracker().getDeathMessage().getUnformattedText() + "_", getName((EntityPlayer) event.getEntity()));
+            SlackRelay.getInstance().sendMessage("_" + ((EntityPlayer) event.getEntity()).getCombatTracker().getDeathMessage().getUnformattedText() + "_", getName((EntityPlayer) event.getEntity()));
         }
     }
 
@@ -49,7 +49,7 @@ public class FMLEventHandler {
             ITextComponent achievementText      = new TextComponentString("[").appendSibling(achievementComponent).appendText("]");
 
             String playerName = getName(event.getEntityPlayer());
-            SlackSender.getInstance().send("_" + playerName + " has earned the achievement: " + achievementText.getUnformattedText() + "_", playerName);
+            SlackRelay.getInstance().sendMessage("_" + playerName + " has earned the achievement: " + achievementText.getUnformattedText() + "_", playerName);
         }
     }
 

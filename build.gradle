@@ -1,10 +1,7 @@
 buildscript {
     repositories {
         jcenter()
-        maven {
-            name = "forge"
-            url = "http://files.minecraftforge.net/maven"
-        }
+        maven { url = "http://files.minecraftforge.net/maven" }
     }
     dependencies {
         classpath "net.minecraftforge.gradle:ForgeGradle:2.2-SNAPSHOT"
@@ -14,33 +11,58 @@ buildscript {
 plugins {
     id "com.github.johnrengelman.shadow" version "1.2.3" // shading
 }
+
 apply plugin: "net.minecraftforge.gradle.forge"  // adds the forge dependency
 
+targetCompatibility = sourceCompatibility = JavaVersion.VERSION_1_8
 
-version = "1.9.4-0.1.1"
+version = "1.10.2-0.2.0"
 group= "com.derimagia.forgeslack" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "forgeslack"
 
-sourceCompatibility = JavaVersion.VERSION_1_8
-targetCompatibility = JavaVersion.VERSION_1_8
-
-dependencies {
-    compile 'net.gpedro.integrations.slack:slack-webhook:1.1.1'
-    compile 'org.eclipse.jetty:jetty-server:9.2.14.v20151106'
+repositories {
+    maven { url = "https://jitpack.io" }
 }
 
 minecraft {
-    mappings = "snapshot_20160522"
-
-    version = "1.9.4-12.17.0.1940"
+    version = "1.10.2-12.18.3.2185"
     runDir = "run"
+
+    // snapshot_YYYYMMDD   snapshot are built nightly.
+    // stable_#            stables are built at the discretion of the MCP team.
+    mappings = "snapshot_20161111"
+}
+
+dependencies {
+    compile group: 'com.github.allbegray', name: 'slack-api', version: 'v1.4.0.RELEASE'
+}
+
+processResources  {
+    // this will ensure that this task is redone when the versions change.
+    inputs.property "version", project.version
+    inputs.property "mcversion", project.minecraft.version
+
+    // replace stuff in mcmod.info, nothing else
+    from(sourceSets.main.resources.srcDirs) {
+        include 'mcmod.info'
+
+        // replace version and mcversion
+        expand 'version': project.version, 'mcversion': project.minecraft.version
+    }
+
+    // copy everything else, thats not the mcmod.info
+    from(sourceSets.main.resources.srcDirs) {
+        exclude 'mcmod.info'
+    }
 }
 
 shadowJar {
     classifier = ""
-    relocate "net.gpedro.integrations.slack", "com.derimagia.forgeslack.net.gpedro.integrations.slack"
-    relocate "org.eclipse.jetty", "com.derimagia.forgeslack.org.eclipse.jetty"
+    relocate "com.github.allbegray", "com.derimagia.forgeslack.com.github.allbegray"
+    relocate "com.fasterxml.jackson.core", "com.derimagia.forgeslack.com.fasterxml.jackson.core"
+    relocate "org.apache.http", "com.derimagia.forgeslack.org.apache.http"
+    relocate "org.asynchttpclient", "com.derimagia.forgeslack.org.asynchttpclient"
 }
 
-reobf { shadowJar { mappingType = "SEARGE" } }
+reobf { shadowJar {  mappingType = "SEARGE" } }
 tasks.reobfShadowJar.mustRunAfter shadowJar
