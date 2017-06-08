@@ -5,9 +5,6 @@ import net.minecraftforge.common.config.Configuration;
 
 import java.io.File;
 
-/**
- * @author derimagia
- */
 public class ConfigurationHandler
 {
     private static Configuration configuration;

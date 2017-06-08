@@ -7,10 +7,8 @@ import com.derimagia.forgeslack.slack.SlackRelay;
 import com.fasterxml.jackson.databind.JsonNode;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.fml.common.FMLCommonHandler;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 
 public class SlackMessageHandler implements EventListener {
     // Mainly Copied from ForgeHooks

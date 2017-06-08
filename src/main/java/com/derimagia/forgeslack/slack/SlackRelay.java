@@ -15,9 +15,6 @@ import com.derimagia.forgeslack.handler.SlackMessageHandler;
 import java.util.HashMap;
 import java.util.List;
 
-/**
- * @author derimagia
- */
 public class SlackRelay {
     private static SlackRelay instance;
     private SlackWebApiClient api;

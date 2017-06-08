@@ -4,20 +4,19 @@ buildscript {
         maven { url = "http://files.minecraftforge.net/maven" }
     }
     dependencies {
-        classpath "net.minecraftforge.gradle:ForgeGradle:2.2-SNAPSHOT"
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.2-SNAPSHOT'
+        classpath 'com.github.jengelman.gradle.plugins:shadow:2.0.0'
     }
 }
 
-plugins {
-    id "com.github.johnrengelman.shadow" version "1.2.3" // shading
-}
-
-apply plugin: "net.minecraftforge.gradle.forge"  // adds the forge dependency
+apply plugin: 'net.minecraftforge.gradle.forge'
+apply plugin: 'com.github.johnrengelman.shadow'
+apply plugin: 'java'
 
 targetCompatibility = sourceCompatibility = JavaVersion.VERSION_1_8
 
 version = "1.10.2-0.2.0"
-group= "com.derimagia.forgeslack" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+group= "com.derimagia.forgeslack"
 archivesBaseName = "forgeslack"
 
 repositories {
@@ -35,6 +34,10 @@ minecraft {
 
 dependencies {
     compile group: 'com.github.allbegray', name: 'slack-api', version: 'v1.4.0.RELEASE'
+
+    // Manually include `org.slf4j` for slack-api
+    compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25'
+    compile group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.25'
 }
 
 processResources  {
@@ -58,11 +61,20 @@ processResources  {
 
 shadowJar {
     classifier = ""
-    relocate "com.github.allbegray", "com.derimagia.forgeslack.com.github.allbegray"
-    relocate "com.fasterxml.jackson.core", "com.derimagia.forgeslack.com.fasterxml.jackson.core"
-    relocate "org.apache.http", "com.derimagia.forgeslack.org.apache.http"
-    relocate "org.asynchttpclient", "com.derimagia.forgeslack.org.asynchttpclient"
+    // Can't relocate this because of something with AsyncHttpClientConfigDefaults:ASYNC_CLIENT_CONFIG_ROOT
+    // but most likely this won't matter because these libraries aren't probably used elsewhere.
+    // relocate "allbegray.slack", "com.derimagia.lib.com.github.allbegray"
+    // relocate "org.asynchttpclient", "com.derimagia.lib.org.asynchttpclient"
+    relocate "com.fasterxml.jackson.core", "com.derimagia.lib.com.fasterxml.jackson.core"
+    relocate "org.apache.http", "com.derimagia.lib.org.apache.http"
+    relocate "org.apache.commons", "com.derimagia.lib.org.apache.commons"
+    relocate "org.slf4j", "com.derimagia.lib.org.slf4j"
+    relocate "io.netty", "com.derimagia.lib.io.netty"
+    relocate "com.typesafe", "com.derimagia.lib.com.typesafe"
+    relocate "com.fasterxml", "com.derimagia.lib.com.fasterxml"
+    relocate "javassist", "com.derimagia.lib.javassist"
 }
 
-reobf { shadowJar {  mappingType = "SEARGE" } }
-tasks.reobfShadowJar.mustRunAfter shadowJar
+reobf {
+    shadowJar { mappingType = 'SEARGE' }
+}
