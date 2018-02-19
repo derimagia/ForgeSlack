@@ -4,7 +4,7 @@ buildscript {
         maven { url = "http://files.minecraftforge.net/maven" }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:2.2-SNAPSHOT'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
         classpath 'com.github.jengelman.gradle.plugins:shadow:2.0.0'
     }
 }
@@ -15,7 +15,7 @@ apply plugin: 'java'
 
 targetCompatibility = sourceCompatibility = JavaVersion.VERSION_1_8
 
-version = "1.10.2-0.2.0"
+version = "1.12.2-0.3.0"
 group= "com.derimagia.forgeslack"
 archivesBaseName = "forgeslack"
 
@@ -24,12 +24,12 @@ repositories {
 }
 
 minecraft {
-    version = "1.10.2-12.18.3.2185"
+    version = "1.12.2-14.23.2.2611"
     runDir = "run"
 
     // snapshot_YYYYMMDD   snapshot are built nightly.
     // stable_#            stables are built at the discretion of the MCP team.
-    mappings = "snapshot_20161111"
+    mappings = "snapshot_20171003"
 }
 
 dependencies {

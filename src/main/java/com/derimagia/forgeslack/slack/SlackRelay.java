@@ -12,6 +12,7 @@ import com.derimagia.forgeslack.ForgeSlack;
 import com.derimagia.forgeslack.handler.ConfigurationHandler;
 import com.derimagia.forgeslack.handler.SlackMessageHandler;
 
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.List;
 
@@ -116,9 +117,7 @@ public class SlackRelay {
 
         if (!username.isEmpty()) {
             chatMessage.setUsername(username);
-            // @TODO: Figure out if we can support 3d avatars again.
-            // chatMessage.setIcon_url("https://mcapi.ca/avatar/3d/" + username);
-            chatMessage.setIcon_url("https://mcapi.ca/avatar/" + username);
+            chatMessage.setIcon_url(MessageFormat.format("https://use.gameapis.net/mc/images/avatar/{0}", username));
         }
 
         // @TODO: Use the rtm instead.

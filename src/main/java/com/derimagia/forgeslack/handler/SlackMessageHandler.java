@@ -5,6 +5,7 @@ import allbegray.slack.type.User;
 import com.derimagia.forgeslack.ForgeSlack;
 import com.derimagia.forgeslack.slack.SlackRelay;
 import com.fasterxml.jackson.databind.JsonNode;
+import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import java.util.regex.Matcher;
@@ -12,7 +13,7 @@ import java.util.regex.Pattern;
 
 public class SlackMessageHandler implements EventListener {
     // Mainly Copied from ForgeHooks
-    static final Pattern URL_PATTERN = Pattern.compile(
+    private static final Pattern URL_PATTERN = Pattern.compile(
             //         schema                          ipv4            OR        namespace                 port     path    ends
             //   |-----------------|        |-------------------------|  |-------------------------|    |---------| |--|   |----|
             "<((?:[a-z0-9]{2,}:\\/\\/)?(?:(?:[0-9]{1,3}\\.){3}[0-9]{1,3}|(?:[-\\w_]{1,}\\.[a-z]{2,}?))(?::[0-9]{1,5})?.*?)(?:[|]((?:[a-z0-9]{2,}:\\/\\/)?(?:(?:[0-9]{1,3}\\.){3}[0-9]{1,3}|(?:[-\\w_]{1,}\\.[a-z]{2,}?))(?::[0-9]{1,5})?.*?))?>",
@@ -45,7 +46,6 @@ public class SlackMessageHandler implements EventListener {
 
         // Check the channel is our channel
         String channel = jsonMessage.get("channel").asText();
-
         if (!channel.equals(slackRelay.getChannelId())) {
             return;
         }
@@ -64,9 +64,11 @@ public class SlackMessageHandler implements EventListener {
             return;
         }
 
-
         String mcMessage = String.format("[Slack] <%s> %s", username, cleanMessageLinks(text));
-        FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().sendChatMsg(ForgeHooks.newChatWithLinks(mcMessage));
+        MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
+        if (server != null) {
+            server.getPlayerList().sendMessage(ForgeHooks.newChatWithLinks(mcMessage));
+        }
     }
 
     /**
