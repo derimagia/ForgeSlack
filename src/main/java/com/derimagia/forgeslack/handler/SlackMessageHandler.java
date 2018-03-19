@@ -21,7 +21,7 @@ public class SlackMessageHandler implements EventListener {
 
     @Override
     public void onMessage(JsonNode jsonMessage) {
-        SlackRelay slackRelay = SlackRelay.getInstance();
+        SlackRelay slackRelay = ForgeSlack.getSlackRelay();
 
         // @TODO: Bot ID is different from user id, so this isn't working right now.
         if (jsonMessage.hasNonNull("bot_id")) {
@@ -40,7 +40,7 @@ public class SlackMessageHandler implements EventListener {
         }
 
         if (!jsonMessage.hasNonNull("channel") || !jsonMessage.hasNonNull("text")) {
-            ForgeSlack.log.error(String.format("Invalid RTM Message for onMessage: %s", jsonMessage));
+            ForgeSlack.logger.error(String.format("Invalid RTM Message for onMessage: %s", jsonMessage));
             return;
         }
 
@@ -60,7 +60,7 @@ public class SlackMessageHandler implements EventListener {
             User user = slackRelay.getUsernameFromId(userid);
             username = user != null ? user.getName() : userid;
         } else {
-            ForgeSlack.log.error(String.format("Invalid RTM Message for onMessage: %s", jsonMessage));
+            ForgeSlack.logger.error(String.format("Invalid RTM Message for onMessage: %s", jsonMessage));
             return;
         }
 

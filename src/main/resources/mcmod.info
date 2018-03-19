@@ -1,17 +1,15 @@
-{
-  "modListVersion": 2,
-  "modList": [{
-    "modid": "mod_forgeslack",
-    "name": "forgeslack",
+[
+  {
+    "modid": "forgeslack",
+    "name": "Forgeslack",
     "description": "A mod which enables chat to be connected with Slack.",
-    "version": "1.12.2-0.3.0",
-    "mcversion": "1.12.2",
+    "version": "${version}",
+    "mcversion": "${mcversion}",
     "url": "https://github.com/derimagia/forgeslack",
     "updateUrl": "",
-    "authorList": [ "derimagia" ],
-    "logoFile": "/mod_ForgeSlack.logo.png",
+    "authorList": ["derimagia"],
+    "logoFile": "/forgeslack-logo.png",
     "credits": "Authored by derimagia. https://docs.gameapis.net/ for supplying API for avatar images. Updated to 1.9.4 by Illyohs.",
-    "requiredMods": [ "Forge" ],
-    "useDependencyInformation": true
-  }]
-}
+    "requiredMods": []
+  }
+]

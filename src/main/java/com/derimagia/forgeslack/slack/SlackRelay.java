@@ -9,8 +9,8 @@ import allbegray.slack.type.User;
 import allbegray.slack.webapi.SlackWebApiClient;
 import allbegray.slack.webapi.method.chats.ChatPostMessageMethod;
 import com.derimagia.forgeslack.ForgeSlack;
-import com.derimagia.forgeslack.handler.ConfigurationHandler;
 import com.derimagia.forgeslack.handler.SlackMessageHandler;
+import net.minecraft.entity.player.EntityPlayer;
 
 import java.text.MessageFormat;
 import java.util.HashMap;
@@ -21,24 +21,15 @@ public class SlackRelay {
     private SlackWebApiClient api;
     private SlackRealTimeMessagingClient rtmapi;
     private String channel;
+    private String slackToken;
     private String channelId;
     private Authentication auth;
     private HashMap<String, User> users;
 
-    private SlackRelay() {
-        channel = ConfigurationHandler.channel;
+    public SlackRelay(String channel, String slackToken) {
+        this.channel = channel;
+        this.slackToken = slackToken;
         users = new HashMap<>();
-    }
-
-    /**
-     * Returns the Instance
-     */
-    public static SlackRelay getInstance() {
-        if (instance == null) {
-            instance = new SlackRelay();
-        }
-
-        return instance;
     }
 
     /**
@@ -69,67 +60,79 @@ public class SlackRelay {
      * Connects the relay
      */
     public void startup() {
-        api = SlackClientFactory.createWebApiClient(ConfigurationHandler.slackToken);
-        rtmapi = SlackClientFactory.createSlackRealTimeMessagingClient(ConfigurationHandler.slackToken);
-        rtmapi.addListener(Event.MESSAGE, new SlackMessageHandler());
-
         (new Thread(() -> {
+            api = SlackClientFactory.createWebApiClient(slackToken);
+            rtmapi = SlackClientFactory.createSlackRealTimeMessagingClient(slackToken);
+            rtmapi.addListener(Event.MESSAGE, new SlackMessageHandler());
+
             fetchChannel();
             fetchUsers();
             auth = api.auth();
             rtmapi.connect();
             sendMessage("Server is online");
-        })).start();
+        }, "ForgeSlack-Startup")).start();
     }
 
     /**
      * Shutdown the Relay
      */
     public void shutdown() {
-        sendMessage("Server is now offline");
+        (new Thread(() -> {
+            sendMessage("Server is now offline");
 
-        if (rtmapi != null) {
-            rtmapi.close();
-        }
+            if (rtmapi != null) {
+                rtmapi.close();
+            }
 
-        if (api != null) {
-            api.shutdown();
-        }
+            if (api != null) {
+                api.shutdown();
+            }
+
+            instance = null;
+        }, "ForgeSlack-Shutdown")).start();
+
     }
 
     /**
      * Sends a Slack Message
      *
-     * @param message - Message to be sent
+     * @param txt - Message to be sent
      */
-    public void sendMessage(String message) {
-        sendMessage(message, "");
+    public void sendMessage(String txt) {
+        ChatPostMessageMethod message = new ChatPostMessageMethod(channel, txt);
+        sendMessage(message);
+    }
+
+
+    /**
+     * Sends a Slack Message from a EntityPlayer
+     *
+     * @param txt - Message to be sent
+     * @param player - Minecraft User
+     */
+    public void sendMessage(String txt, EntityPlayer player) {
+        ChatPostMessageMethod message = new ChatPostMessageMethod(channel, txt);
+        message.setUsername(player.getDisplayName().getUnformattedText());
+        String uuid = player.getCachedUniqueIdString().replaceAll("-", "");
+        message.setIcon_url(MessageFormat.format("https://use.gameapis.net/mc/images/avatar/{0}", uuid));
+        sendMessage(message);
     }
 
     /**
      * Sends a Slack Message in a new Thread
-     * 
+     *
      * @param message - Message to be sent
-     * @param username - Minecraft Username of User.
      */
-    public void sendMessage(String message, String username) {
-        ChatPostMessageMethod chatMessage = new ChatPostMessageMethod(channel, message);
-
-        if (!username.isEmpty()) {
-            chatMessage.setUsername(username);
-            chatMessage.setIcon_url(MessageFormat.format("https://use.gameapis.net/mc/images/avatar/{0}", username));
-        }
-
-        // @TODO: Use the rtm instead.
+    public void sendMessage(ChatPostMessageMethod message) {
         (new Thread(() -> {
             try {
                 if (api != null) {
-                    api.postMessage(chatMessage);
+                    api.postMessage(message);
                 } else {
-                    ForgeSlack.log.error(String.format("Tried to send slack message: '%s'. Slack Web API Client is not started.", chatMessage));
+                    ForgeSlack.logger.error(String.format("Tried to send slack message: '%s'. Slack Web API Client is not started.", message));
                 }
             } catch (Exception e) {
-                ForgeSlack.log.error(e.getMessage());
+                ForgeSlack.logger.error(e.getMessage());
             }
         }, "ForgeSlack-message")).start();
     }

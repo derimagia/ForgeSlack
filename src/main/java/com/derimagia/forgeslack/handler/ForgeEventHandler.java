@@ -1,10 +1,9 @@
 package com.derimagia.forgeslack.handler;
 
+import com.derimagia.forgeslack.ForgeSlack;
 import com.derimagia.forgeslack.slack.SlackRelay;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.scoreboard.ScorePlayerTeam;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.AdvancementEvent;
@@ -17,25 +16,25 @@ import java.text.MessageFormat;
 public class ForgeEventHandler {
     @SubscribeEvent
     public void onServerChat(ServerChatEvent event) {
-        SlackRelay.getInstance().sendMessage(event.getMessage(), event.getUsername());
+        ForgeSlack.getSlackRelay().sendMessage(event.getMessage(), event.getPlayer());
     }
 
     @SubscribeEvent
     public void onJoin(PlayerEvent.PlayerLoggedInEvent event) {
         // @TODO: Localize this?
-        SlackRelay.getInstance().sendMessage("_[Joined the Game]_", getName(event.player));
+        ForgeSlack.getSlackRelay().sendMessage("_[Joined the Game]_", event.player);
     }
 
     @SubscribeEvent
     public void onLeave(PlayerEvent.PlayerLoggedOutEvent event) {
         // @TODO: Localize this?
-        SlackRelay.getInstance().sendMessage("_[Left the Game]_", getName(event.player));
+        ForgeSlack.getSlackRelay().sendMessage("_[Left the Game]_", event.player);
     }
 
     @SubscribeEvent
     public void onLivingDeath(LivingDeathEvent event) {
         if (event.getEntity() instanceof EntityPlayer  && !(event.getEntityLiving() instanceof FakePlayer) && !event.getEntity().world.isRemote) {
-            SlackRelay.getInstance().sendMessage("_" + ((EntityPlayer) event.getEntity()).getCombatTracker().getDeathMessage().getUnformattedText() + "_", getName((EntityPlayer) event.getEntity()));
+            ForgeSlack.getSlackRelay().sendMessage("_" + ((EntityPlayer) event.getEntity()).getCombatTracker().getDeathMessage().getUnformattedText() + "_", (EntityPlayer) event.getEntity());
         }
     }
 
@@ -49,11 +48,12 @@ public class ForgeEventHandler {
             return;
         }
 
-        ITextComponent achievementText = event.getAdvancement().getDisplayText();
-        String playerName = getName(event.getEntityPlayer());
-        String msg = MessageFormat.format("_{0} has earned the achievement: {1}_", playerName, achievementText.getUnformattedText());
+        String achievementText = event.getAdvancement().getDisplayText().getUnformattedText();
+        EntityPlayer player = event.getEntityPlayer();
+        String playerName = getName(player);
+        String msg = MessageFormat.format("_{0} has earned the achievement: {1}_", playerName, achievementText);
 
-        SlackRelay.getInstance().sendMessage(msg, playerName);
+        ForgeSlack.getSlackRelay().sendMessage(msg, player);
     }
 
     private static String getName(EntityPlayer player) {

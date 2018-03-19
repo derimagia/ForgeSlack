@@ -9,18 +9,27 @@ buildscript {
     }
 }
 
+//plugins {
+//    id 'com.gradle.build-scan' version '1.12.1'
+//}
+
 apply plugin: 'net.minecraftforge.gradle.forge'
 apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'java'
 
 targetCompatibility = sourceCompatibility = JavaVersion.VERSION_1_8
 
-version = "1.12.2-0.3.0"
-group= "com.derimagia.forgeslack"
+version = "1.12.2-0.3.1"
+group = "com.derimagia.forgeslack"
 archivesBaseName = "forgeslack"
 
 repositories {
     maven { url = "https://jitpack.io" }
+}
+
+buildScan {
+    licenseAgreementUrl = 'https://gradle.com/terms-of-service'
+    licenseAgree = 'yes'
 }
 
 minecraft {
@@ -40,7 +49,7 @@ dependencies {
     compile group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.25'
 }
 
-processResources  {
+processResources {
     // this will ensure that this task is redone when the versions change.
     inputs.property "version", project.version
     inputs.property "mcversion", project.minecraft.version
@@ -60,7 +69,7 @@ processResources  {
 }
 
 shadowJar {
-    classifier = ""
+    classifier = ''
     // Can't relocate this because of something with AsyncHttpClientConfigDefaults:ASYNC_CLIENT_CONFIG_ROOT
     // but most likely this won't matter because these libraries aren't probably used elsewhere.
     // relocate "allbegray.slack", "com.derimagia.lib.com.github.allbegray"
