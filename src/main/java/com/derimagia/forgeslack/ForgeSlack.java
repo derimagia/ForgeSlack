@@ -10,11 +10,10 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.event.FMLServerStoppedEvent;
 import org.apache.logging.log4j.Logger;
 
-import java.io.File;
-
-@Mod(modid = ForgeSlack.modId, useMetadata=true, acceptableRemoteVersions = "*", guiFactory = "com.derimagia.forgeslack.client.gui.ForgeSlackConfigGuiFactory")
+@Mod(modid = ForgeSlack.modId, version=ForgeSlack.version, useMetadata=true, acceptableRemoteVersions = "*", canBeDeactivated=true)
 public class ForgeSlack {
     public static final String modId = "forgeslack";
+    public static final String version = "@VERSION@";
 
     public static Logger logger;
     private static SlackRelay slackRelay;
@@ -35,11 +34,6 @@ public class ForgeSlack {
         }
     }
 
-//    @Mod.EventHandler
-//    public void postInit(FMLPostInitializationEvent evt)
-//    {
-//        ForgeSlackConfig.sync();
-//    }
 
     @Mod.EventHandler
     public void serverStarting(FMLServerStartingEvent event) {
@@ -48,7 +42,7 @@ public class ForgeSlack {
             slackRelay.startup();
         }
     }
-  
+
     @Mod.EventHandler
     public void serverStopped(FMLServerStoppedEvent event) {
         if (enabled) {
@@ -60,8 +54,7 @@ public class ForgeSlack {
     /**
      * Sync the config.
      */
-    private static void syncConfig()
-    {
+    private static void syncConfig() {
         enabled = config.getBoolean("enabled", Configuration.CATEGORY_GENERAL, true, "Whether ForgeSlack is enabled.");
         slackToken = config.getString("slackToken", Configuration.CATEGORY_GENERAL, "", "Token Slack provides to Accept Slack Messages");
         channel = config.getString("channel", Configuration.CATEGORY_GENERAL, "#general", "Slack Channel to Listen/Send on");

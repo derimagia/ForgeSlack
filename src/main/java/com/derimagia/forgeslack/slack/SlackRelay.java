@@ -17,7 +17,6 @@ import java.util.HashMap;
 import java.util.List;
 
 public class SlackRelay {
-    private static SlackRelay instance;
     private SlackWebApiClient api;
     private SlackRealTimeMessagingClient rtmapi;
     private String channel;
@@ -47,7 +46,7 @@ public class SlackRelay {
      */
     private void fetchChannel() {
         List<Channel> channels = api.getChannelList();
-        for (Channel c: channels) {
+        for (Channel c : channels) {
             String fullName = "#" + c.getName();
             if (fullName.equals(channel)) {
                 channelId = c.getId();
@@ -60,11 +59,11 @@ public class SlackRelay {
      * Connects the relay
      */
     public void startup() {
-        (new Thread(() -> {
-            api = SlackClientFactory.createWebApiClient(slackToken);
-            rtmapi = SlackClientFactory.createSlackRealTimeMessagingClient(slackToken);
-            rtmapi.addListener(Event.MESSAGE, new SlackMessageHandler());
+        api = SlackClientFactory.createWebApiClient(slackToken);
+        rtmapi = SlackClientFactory.createSlackRealTimeMessagingClient(slackToken);
+        rtmapi.addListener(Event.MESSAGE, new SlackMessageHandler());
 
+        (new Thread(() -> {
             fetchChannel();
             fetchUsers();
             auth = api.auth();
@@ -87,8 +86,6 @@ public class SlackRelay {
             if (api != null) {
                 api.shutdown();
             }
-
-            instance = null;
         }, "ForgeSlack-Shutdown")).start();
 
     }
@@ -107,7 +104,7 @@ public class SlackRelay {
     /**
      * Sends a Slack Message from a EntityPlayer
      *
-     * @param txt - Message to be sent
+     * @param txt    - Message to be sent
      * @param player - Minecraft User
      */
     public void sendMessage(String txt, EntityPlayer player) {
@@ -138,23 +135,22 @@ public class SlackRelay {
     }
 
     /**
-     * Gets the Bot ID of the auth.
+     * @return Bot ID of the auth.
      */
     public String getBotId() {
         return auth.getUser_id();
     }
 
     /**
-     * Gets the channel id we are relaying.
+     * @return The channel id we are relaying.
      */
     public String getChannelId() {
         return channelId;
     }
 
     /**
-     * Gets a User from a userid.
-     *
      * @param userId - Slack userid of the user.
+     * @return User from a userid.
      */
     public User getUsernameFromId(String userId) {
         User user = users.get(userId);

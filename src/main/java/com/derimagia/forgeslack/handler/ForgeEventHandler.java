@@ -1,7 +1,6 @@
 package com.derimagia.forgeslack.handler;
 
 import com.derimagia.forgeslack.ForgeSlack;
-import com.derimagia.forgeslack.slack.SlackRelay;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraftforge.common.util.FakePlayer;
@@ -33,7 +32,7 @@ public class ForgeEventHandler {
 
     @SubscribeEvent
     public void onLivingDeath(LivingDeathEvent event) {
-        if (event.getEntity() instanceof EntityPlayer  && !(event.getEntityLiving() instanceof FakePlayer) && !event.getEntity().world.isRemote) {
+        if (event.getEntity() instanceof EntityPlayer && !(event.getEntityLiving() instanceof FakePlayer) && !event.getEntity().world.isRemote) {
             ForgeSlack.getSlackRelay().sendMessage("_" + ((EntityPlayer) event.getEntity()).getCombatTracker().getDeathMessage().getUnformattedText() + "_", (EntityPlayer) event.getEntity());
         }
     }

@@ -5,16 +5,12 @@ buildscript {
     }
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
-        classpath 'com.github.jengelman.gradle.plugins:shadow:2.0.0'
+        classpath 'com.github.jengelman.gradle.plugins:shadow:2.0.2'
     }
 }
 
-//plugins {
-//    id 'com.gradle.build-scan' version '1.12.1'
-//}
-
-apply plugin: 'net.minecraftforge.gradle.forge'
 apply plugin: 'com.github.johnrengelman.shadow'
+apply plugin: 'net.minecraftforge.gradle.forge'
 apply plugin: 'java'
 
 targetCompatibility = sourceCompatibility = JavaVersion.VERSION_1_8
@@ -27,11 +23,6 @@ repositories {
     maven { url = "https://jitpack.io" }
 }
 
-buildScan {
-    licenseAgreementUrl = 'https://gradle.com/terms-of-service'
-    licenseAgree = 'yes'
-}
-
 minecraft {
     version = "1.12.2-14.23.2.2611"
     runDir = "run"
@@ -39,6 +30,9 @@ minecraft {
     // snapshot_YYYYMMDD   snapshot are built nightly.
     // stable_#            stables are built at the discretion of the MCP team.
     mappings = "snapshot_20171003"
+
+    replaceIn "ForgeSlack.java"
+    replace "@VERSION@", project.version
 }
 
 dependencies {

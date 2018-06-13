@@ -8,16 +8,17 @@ import com.fasterxml.jackson.databind.JsonNode;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.fml.common.FMLCommonHandler;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class SlackMessageHandler implements EventListener {
     // Mainly Copied from ForgeHooks
     private static final Pattern URL_PATTERN = Pattern.compile(
-            //         schema                          ipv4            OR        namespace                 port     path    ends
-            //   |-----------------|        |-------------------------|  |-------------------------|    |---------| |--|   |----|
-            "<((?:[a-z0-9]{2,}:\\/\\/)?(?:(?:[0-9]{1,3}\\.){3}[0-9]{1,3}|(?:[-\\w_]{1,}\\.[a-z]{2,}?))(?::[0-9]{1,5})?.*?)(?:[|]((?:[a-z0-9]{2,}:\\/\\/)?(?:(?:[0-9]{1,3}\\.){3}[0-9]{1,3}|(?:[-\\w_]{1,}\\.[a-z]{2,}?))(?::[0-9]{1,5})?.*?))?>",
-            Pattern.CASE_INSENSITIVE);
+        //         schema                          ipv4            OR        namespace                 port     path    ends
+        //   |-----------------|        |-------------------------|  |-------------------------|    |---------| |--|   |----|
+        "<((?:[a-z0-9]{2,}:\\/\\/)?(?:(?:[0-9]{1,3}\\.){3}[0-9]{1,3}|(?:[-\\w_]{1,}\\.[a-z]{2,}?))(?::[0-9]{1,5})?.*?)(?:[|]((?:[a-z0-9]{2,}:\\/\\/)?(?:(?:[0-9]{1,3}\\.){3}[0-9]{1,3}|(?:[-\\w_]{1,}\\.[a-z]{2,}?))(?::[0-9]{1,5})?.*?))?>",
+        Pattern.CASE_INSENSITIVE);
 
     @Override
     public void onMessage(JsonNode jsonMessage) {
@@ -51,7 +52,6 @@ public class SlackMessageHandler implements EventListener {
         }
 
         String text = jsonMessage.get("text").asText();
-
         String username;
         if (jsonMessage.hasNonNull("username")) {
             username = jsonMessage.findPath("username").asText();
@@ -73,9 +73,7 @@ public class SlackMessageHandler implements EventListener {
 
     /**
      * Slack returns the urls wrapped with "< http://example.com | example.com >" (Without spaces)
-     *
      * This removes that so that it's just "http://example.com".
-     *
      * This also fixes ForgeHooks.newChatWithLinks so that it can then replace the links correctly.
      *
      * @param text - The text to clean.
